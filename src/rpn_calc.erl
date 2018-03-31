@@ -22,8 +22,9 @@ rpn(Expr) ->
 do_verbose(Tokens) ->
   io:format("Input: "),
   print_list(Tokens),
-  io:format("Output: "),
-  process(Tokens, []).
+  Result = process(Tokens, []),
+  io:format("Output: ~w~n", [Result]),
+  Result.
 
 verbosity(X) ->
   case X of
@@ -42,7 +43,7 @@ process([], [SH | _ST]) ->
 process(["+" | T], [A, B | ST]) when is_number(A) and is_number(B) ->
   process(T, [A + B | ST]);
 process(["-" | T], [A, B | ST]) when is_number(A) and is_number(B) ->
-  process(T, [A - B | ST]);
+  process(T, [B - A | ST]);
 process(["*" | T], [A, B | ST]) when is_number(A) and is_number(B) ->
   process(T, [A * B | ST]);
 process(["/" | T], [A, B | ST]) when is_number(A) and is_number(B) ->
@@ -60,9 +61,9 @@ process(["tan" | T], [A | ST]) when is_number(A) ->
 process(["cot" | T], [A | ST]) when is_number(A) ->
   process(T, [1 / math:tan(A) | ST]);
 process(["ceil" | T], [A | ST]) when is_number(A) ->
-  process(T, [1 / math:ceil(A) | ST]);
+  process(T, [math:ceil(A) | ST]);
 process(["floor" | T], [A | ST]) when is_number(A) ->
-  process(T, [1 / math:floor(A) | ST]);
+  process(T, [math:floor(A) | ST]);
 process(["pop" | T], [_A | ST]) ->
   process(T, ST);
 process(["ps" | T], ST) ->
